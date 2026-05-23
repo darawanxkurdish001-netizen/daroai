@@ -226,17 +226,17 @@ signInWithEmailAndPassword
 
 const firebaseConfig = {
 
-apiKey: "PASTE_API_KEY",
+apiKey: "AIzaSyCvpvG3ddAgJWQrBC_eOo77hy0fKieFSMA",
 
-authDomain: "PASTE_AUTH_DOMAIN",
+authDomain: "daroai.firebaseapp.com",
 
-projectId: "PASTE_PROJECT_ID",
+projectId: "daroai",
 
-storageBucket: "PASTE_STORAGE_BUCKET",
+storageBucket: "daroai.firebasestorage.app",
 
-messagingSenderId: "PASTE_SENDER_ID",
+messagingSenderId: "1096911162995",
 
-appId: "PASTE_APP_ID"
+appId: "1:1096911162995:web:22bca6799ab7777265e406"
 
 };
 
@@ -277,6 +277,16 @@ signInWithEmailAndPassword(auth, email, password)
 .then(() => {
 
 alert("Login Success");
+
+window.location.href = "https://project-nehxk.vercel.app/";
+
+})
+
+.catch((error) => {
+
+alert(error.message);
+
+});
 
 })
 
