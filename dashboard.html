@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daro AI Dashboard</title>
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#050816;
+color:white;
+margin:0;
+padding:20px;
+}
+.box{
+max-width:700px;
+margin:60px auto;
+background:#111827;
+padding:30px;
+border-radius:20px;
+border:1px solid #312e81;
+text-align:center;
+}
+h1{color:#8b5cf6}
+.btn{
+background:#8b5cf6;
+color:white;
+border:none;
+padding:14px 22px;
+border-radius:12px;
+cursor:pointer;
+font-size:16px;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h1>Dashboard</h1>
+<p>بەخێربێیت بۆ Daro AI 🎉</p>
+<p id="userEmail"></p>
+<button class="btn" id="logoutBtn">Logout</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyCvpvG3ddAgJWQrBC_eOo77hy0fKieFSMA",
+authDomain: "daroai.firebaseapp.com",
+projectId: "daroai",
+storageBucket: "daroai.firebasestorage.app",
+messagingSenderId: "1096911162995",
+appId: "1:1096911162995:web:22bca6799ab7777265e406"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, (user) => {
+if (user) {
+document.getElementById("userEmail").innerText = user.email;
+} else {
+window.location.href = "./index.html";
+}
+});
+
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+await signOut(auth);
+alert("Logout Success");
+window.location.href = "./index.html";
+});
+</script>
+
+</body>
+</html>
