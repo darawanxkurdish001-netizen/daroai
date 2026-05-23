@@ -1,62 +1,87 @@
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daro AI Dashboard</title>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCvpvG3ddAgJWQrBC_eOo77hy0fKieFSMA",
-  authDomain: "daroai.firebaseapp.com",
-  projectId: "daroai",
-  storageBucket: "daroai.firebasestorage.app",
-  messagingSenderId: "1096911162995",
-  appId: "1:1096911162995:web:22bca6799ab7777265e406"
-};
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+body{
+background:#050816;
+color:white;
+padding:20px;
+}
 
-// Signup
-window.signup = async function () {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
+.header{
+background:#111827;
+padding:20px;
+border-radius:20px;
+margin-bottom:20px;
+border:1px solid #312e81;
+}
 
-  if (!email || !password) {
-    alert("Email و Password پڕ بکە");
-    return;
-  }
+.header h1{
+color:#8b5cf6;
+margin-bottom:10px;
+}
 
-  try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    alert("Account Created Successfully");
-  } catch (error) {
-    alert(error.message);
-    console.error(error);
-  }
-};
+.card{
+background:#111827;
+padding:20px;
+border-radius:20px;
+margin-bottom:20px;
+border:1px solid #312e81;
+}
 
-// Login
-window.login = async function () {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
+.card h2{
+color:#8b5cf6;
+margin-bottom:10px;
+}
 
-  if (!email || !password) {
-    alert("Email و Password پڕ بکە");
-    return;
-  }
+.btn{
+width:100%;
+padding:15px;
+background:#8b5cf6;
+color:white;
+border:none;
+border-radius:12px;
+font-size:18px;
+cursor:pointer;
+}
+</style>
+</head>
 
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    alert("Login Success");
+<body>
 
-    // Go to dashboard
-    window.location.href = "/dashboard.html";
+<div class="header">
+<h1>Daro AI Dashboard</h1>
+<p>بەخێربێیت بۆ داشبۆردی Daro AI 🚀</p>
+</div>
 
-  } catch (error) {
-    alert(error.message);
-    console.error(error);
-  }
-};
-</script>
+<div class="card">
+<h2>Facebook Connect</h2>
+<p>پەیجەی فەیسبووک پەیوەست بکە</p>
+<button class="btn">Connect Facebook</button>
+</div>
+
+<div class="card">
+<h2>AI Replies</h2>
+<p>وەڵامدانەوەی خۆکار چالاک بکە</p>
+<button class="btn">Enable AI</button>
+</div>
+
+<div class="card">
+<h2>Comments</h2>
+<p>کۆمێنتەکانت ببینە</p>
+<button class="btn">Open Comments</button>
+</div>
+
+</body>
+</html>
