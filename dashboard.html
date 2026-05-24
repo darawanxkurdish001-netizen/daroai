@@ -1,87 +1,115 @@
 <!DOCTYPE html>
 <html lang="ku" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daro AI Dashboard</title>
-
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
-body{
-background:#050816;
-color:white;
-padding:20px;
-}
-
-.header{
-background:#111827;
-padding:20px;
-border-radius:20px;
-margin-bottom:20px;
-border:1px solid #312e81;
-}
-
-.header h1{
-color:#8b5cf6;
-margin-bottom:10px;
-}
-
-.card{
-background:#111827;
-padding:20px;
-border-radius:20px;
-margin-bottom:20px;
-border:1px solid #312e81;
-}
-
-.card h2{
-color:#8b5cf6;
-margin-bottom:10px;
-}
-
-.btn{
-width:100%;
-padding:15px;
-background:#8b5cf6;
-color:white;
-border:none;
-border-radius:12px;
-font-size:18px;
-cursor:pointer;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daro AI - Dashboard</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+    body{background:#050816;color:white;}
+    header{display:flex;justify-content:space-between;align-items:center;padding:20px;background:#0b1023;border-bottom:1px solid #1f2a44;}
+    .logo{font-size:28px;font-weight:bold;color:#8b5cf6;}
+    .btn{background:#8b5cf6;color:white;padding:12px 20px;border:none;border-radius:12px;font-size:16px;cursor:pointer;text-decoration:none;font-weight:bold;}
+    .hero{padding:40px 20px;text-align:center;}
+    .card-container{display:grid;grid-template-columns:1fr;gap:20px;padding:20px;}
+    .card{background:#0f172a;padding:25px;border-radius:20px;border:1px solid #1e293b;box-shadow:0 0 20px rgba(139,92,246,0.2);}
+    .card h2{color:#8b5cf6;margin-bottom:15px;}
+    footer{text-align:center;padding:30px;color:#9ca3af;}
+  </style>
 </head>
-
 <body>
 
-<div class="header">
-<h1>Daro AI Dashboard</h1>
-<p>بەخێربێیت بۆ داشبۆردی Daro AI 🚀</p>
-</div>
+<header>
+  <div class="logo">Daro AI Dashboard</div>
+  <button onclick="logout()" class="btn" style="background:#ef4444;">چوونە دەرەوە</button>
+</header>
 
-<div class="card">
-<h2>Facebook Connect</h2>
-<p>پەیجەی فەیسبووک پەیوەست بکە</p>
-<button class="btn">Connect Facebook</button>
-</div>
+<section class="hero">
+  <h1>بەخێر بێیت بۆ داشبۆردی 🚀 Daro AI</h1>
+  <p style="color:#9ca3af; margin-top:10px;" id="user-email">بارودۆخ: لە چاوەڕوانیدا...</p>
+</section>
 
-<div class="card">
-<h2>AI Replies</h2>
-<p>وەڵامدانەوەی خۆکار چالاک بکە</p>
-<button class="btn">Enable AI</button>
-</div>
+<section class="card-container">
+  <div class="card">
+    <h2>Facebook Connect</h2>
+    <p style="margin-bottom:15px;">پەیجەکەت بە ئاسانی پەیوەست بکە بە Daro AI بۆ وەڵامدانەوەی خۆکار.</p>
+    <button onclick="connectFacebook()" class="btn" style="background:#1877F2; width:100%;">Connect Facebook</button>
+  </div>
 
-<div class="card">
-<h2>Comments</h2>
-<p>کۆمێنتەکانت ببینە</p>
-<button class="btn">Open Comments</button>
-</div>
+  <div class="card">
+    <h2>AI Replies</h2>
+    <p style="margin-bottom:15px;">وەڵامدانەوەی خۆکار چالاک بکە.</p>
+    <button class="btn" style="width:100%;">Enable AI</button>
+  </div>
+
+  <div class="card">
+    <h2>Comments</h2>
+    <p style="margin-bottom:15px;">کۆمێنتەکانت ببینە.</p>
+    <button class="btn" style="width:100%;">Open Comments</button>
+  </div>
+</section>
+
+<footer>
+  <p>WhatsApp: +9647507032589</p>
+  <p>© 2026 Daro AI</p>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut, signInWithRedirect, FacebookAuthProvider, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCvpvG3ddAgJWQrBC_eOo77hy0fKieFSMA",
+  authDomain: "daroai.firebaseapp.com",
+  projectId: "daroai",
+  storageBucket: "daroai.firebasestorage.app",
+  messagingSenderId: "1096911162995",
+  appId: "1:1096911162995:web:22bca6799ab7777265e406"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const provider = new FacebookAuthProvider();
+provider.addScope('pages_read_engagement');
+provider.addScope('pages_manage_metadata');
+provider.addScope('pages_manage_posts');
+provider.addScope('pages_messaging');
+
+// پشکینی ئەوەی ئایا بەکارهێنەر لۆگینی کردووە
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    document.getElementById("user-email").innerText = "بەکارهێنەر: " + (user.email || user.displayName);
+  } else {
+    window.location.href = "index.html";
+  }
+});
+
+window.connectFacebook = async function() {
+  try {
+    await signInWithRedirect(auth, provider);
+  } catch (error) {
+    alert("هەڵە: " + error.message);
+  }
+};
+
+// گرتنەوەی ئەنجامی بەستنەوەی فەیسبووک
+getRedirectResult(auth).then((result) => {
+  if (result) {
+    const credential = FacebookAuthProvider.credentialFromResult(result);
+    const accessToken = credential.accessToken;
+    console.log("Facebook Access Token:", accessToken);
+    alert("🎉 فەیسبووکەکەت بە سەرکەوتوویی بەستراوەوە!");
+  }
+}).catch((error) => {
+  console.error(error);
+  alert("کێشەیەک هەیە لە بەستنەوەدا: " + error.message);
+});
+
+window.logout = function() {
+  signOut(auth).then(() => { window.location.href = "index.html"; });
+};
+</script>
 
 </body>
 </html>
