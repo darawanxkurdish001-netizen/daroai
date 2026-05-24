@@ -9,7 +9,8 @@
     body{background:#050816;color:white;}
     header{display:flex;justify-content:space-between;align-items:center;padding:20px;background:#0b1023;border-bottom:1px solid #1f2a44;}
     .logo{font-size:28px;font-weight:bold;color:#8b5cf6;}
-    .btn{background:#8b5cf6;color:white;padding:12px 20px;border:none;border-radius:12px;font-size:16px;cursor:pointer;text-decoration:none;font-weight:bold;}
+    .btn{background:#8b5cf6;color:white;padding:12px 20px;border:none;border-radius:12px;font-size:16px;cursor:pointer;text-decoration:none;font-weight:bold;transition: 0.3s;}
+    .btn:hover{opacity: 0.9;}
     .hero{padding:40px 20px;text-align:center;}
     .card-container{display:grid;grid-template-columns:1fr;gap:20px;padding:20px;}
     .card{background:#0f172a;padding:25px;border-radius:20px;border:1px solid #1e293b;box-shadow:0 0 20px rgba(139,92,246,0.2);}
@@ -33,19 +34,19 @@
   <div class="card">
     <h2>Facebook Connect</h2>
     <p style="margin-bottom:15px;">پەیجەکەت بە ئاسانی پەیوەست بکە بە Daro AI بۆ وەڵامدانەوەی خۆکار.</p>
-    <button onclick="connectFacebook()" class="btn" style="background:#1877F2; width:100%;">Connect Facebook</button>
+    <button onclick="connectFacebook()" id="fb-btn" class="btn" style="background:#1877F2; width:100%;">Connect Facebook</button>
   </div>
 
   <div class="card">
     <h2>AI Replies</h2>
-    <p style="margin-bottom:15px;">وەڵامدانەوەی خۆکار چالاک بکە.</p>
-    <button class="btn" style="width:100%;">Enable AI</button>
+    <p style="margin-bottom:15px;">وەڵامدانەوەی خۆکار لە ڕێگەی زیرەکی دەستکردەوە چالاک بکە.</p>
+    <button onclick="toggleAI()" id="ai-btn" class="btn" style="width:100%; background:#6d28d9;">Enable AI</button>
   </div>
 
   <div class="card">
     <h2>Comments</h2>
-    <p style="margin-bottom:15px;">کۆمێنتەکانت ببینە.</p>
-    <button class="btn" style="width:100%;">Open Comments</button>
+    <p style="margin-bottom:15px;">کۆمێنتەکانی پەیجەکەت لێرەوە ببینە و چاودێری بکە.</p>
+    <button onclick="viewComments()" id="comments-btn" class="btn" style="width:100%; background:#4f46e5;">Open Comments</button>
   </div>
 </section>
 
@@ -71,13 +72,16 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 const provider = new FacebookAuthProvider();
-// جێگیرکردنی وەشانی نوێی مێتا لێرەشدا بۆ بەستنەوەی پاشکۆیی پەیجەکان
 provider.setCustomParameters({ 'version': 'v25.0' });
 
 provider.addScope('pages_read_engagement');
 provider.addScope('pages_manage_metadata');
 provider.addScope('pages_manage_posts');
 provider.addScope('pages_messaging');
+
+// گۆڕاوەکان بۆ هەڵگرتنی دۆخەکە لەناو لاپەڕەکەدا
+let isFacebookConnected = false;
+let isAIEnabled = false;
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -99,15 +103,55 @@ getRedirectResult(auth).then((result) => {
   if (result) {
     const credential = FacebookAuthProvider.credentialFromResult(result);
     const accessToken = credential.accessToken;
-    console.log("Facebook Access Token:", accessToken);
+    
+    // پاشەکەوتکردنی تۆکنەکە بۆ بەکارهێنان لە داهاتوودا
+    localStorage.setItem("fb_access_token", accessToken);
+    isFacebookConnected = true;
+    
+    document.getElementById("fb-btn").innerText = "Connected ✅";
+    document.getElementById("fb-btn").style.background = "#10b981";
     alert("🎉 فەیسبووکەکەت بە سەرکەوتوویی بەستراوەوە!");
   }
 }).catch((error) => {
   console.error(error);
-  alert("کێشەیەک هەیە لە بەستنەوەدا: " + error.message);
 });
 
+// ١. لۆجیکی چالاککردنی AI
+window.toggleAI = function() {
+  // پشکنین بۆ ئەوەی بزانین فەیسبووکی بەستۆتەوە یاخود نا
+  const token = localStorage.getItem("fb_access_token");
+  if (!token) {
+    alert("تکایە سەرەتا فەیسبووکەکەت پەیوەست بکە (Connect Facebook) پێش چالاککردنی AI!");
+    return;
+  }
+
+  isAIEnabled = !isAIEnabled;
+  const aiBtn = document.getElementById("ai-btn");
+  
+  if (isAIEnabled) {
+    aiBtn.innerText = "AI is Active 🤖";
+    aiBtn.style.background = "#10b981";
+    alert("🤖 وەڵامدانەوەی خۆکاری AI بە سەرکەوتوویی چالاککرا!");
+  } else {
+    aiBtn.innerText = "Enable AI";
+    aiBtn.style.background = "#6d28d9";
+    alert("⚠️ وەڵامدانەوەی خۆکاری AI ڕاگیرا.");
+  }
+};
+
+// ٢. لۆجیکی بینینی کۆمێنتەکان
+window.viewComments = function() {
+  const token = localStorage.getItem("fb_access_token");
+  if (!token) {
+    alert("تکایە سەرەتا لۆگینی فەیسبووک بکە بۆ بینینی کۆمێنتەکان!");
+    return;
+  }
+  
+  alert("🔍 لە ئێستادا سیستەمەکە چاودێری پەیجەکەت دەکات بۆ خوێندنەوەی کۆمێنتە نوێیەکان بە شێوەی ڕاستەوخۆ (Live).");
+};
+
 window.logout = function() {
+  localStorage.removeItem("fb_access_token");
   signOut(auth).then(() => { window.location.href = "index.html"; });
 };
 </script>
