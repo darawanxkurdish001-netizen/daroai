@@ -3,31 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Daro AI - لۆگین</title>
+  <title>Daro AI - Login</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
-    body{background:#050816;color:white;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;}
+    body{background:#050816;color:white;display:flex;justify-content:center;align-items:center;min-height:100vh;}
     .login-container{background:#111827;padding:30px;border-radius:20px;border:1px solid #312e81;width:100%;max-width:400px;text-align:center;}
     h2{margin-bottom:20px;color:#8b5cf6;}
-    input{width:100%;padding:14px;margin-bottom:15px;border:none;border-radius:10px;background:#1f2937;color:white;}
-    .btn{background:#8b5cf6;color:white;padding:12px 20px;border:none;border-radius:12px;font-size:16px;cursor:pointer;width:100%;margin-bottom:10px;font-weight:bold;}
+    .btn{background:#1877F2;color:white;padding:14px 20px;border:none;border-radius:12px;font-size:16px;cursor:pointer;width:100%;font-weight:bold;}
   </style>
 </head>
 <body>
 
 <div class="login-container">
-  <h2>Daro AI Login</h2>
-  <input type="email" id="email" placeholder="ئیمەیڵ">
-  <input type="password" id="password" placeholder="وشەی تێپەڕ">
-  <button onclick="signup()" class="btn">Sign Up</button>
-  <button onclick="login()" class="btn" style="background:#4f46e5;">Login</button>
-  <hr style="border-color:#1f2a44; margin:20px 0;">
-  <button onclick="facebookLogin()" class="btn" style="background:#1877F2; margin-bottom:0;">Login with Facebook</button>
+  <h2>Daro AI</h2>
+  <p style="color:#9ca3af; margin-bottom:20px;">بۆ چوونە ناو داشبۆرد فەیسبووکەکەت ببەستەوە</p>
+  <button onclick="facebookLogin()" class="btn">Login with Facebook</button>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithRedirect, FacebookAuthProvider, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithPopup, FacebookAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCvpvG3ddAgJWQrBC_eOo77hy0fKieFSMA",
@@ -42,43 +37,20 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 const provider = new FacebookAuthProvider();
-// جێگیرکردنی وەشانی نوێی مێتا بۆ ڕێگری لە هەڵەی فەیسبووک
-provider.setCustomParameters({ 'version': 'v25.0' });
-
-provider.addScope('pages_read_engagement');
-provider.addScope('pages_manage_metadata');
-provider.addScope('pages_manage_posts');
-provider.addScope('pages_messaging');
-
-window.signup = async function () {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-  if (!email || !password) return alert("تکایە خانەکان پڕ بکەرەوە");
-  try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    window.location.href = "dashboard.html";
-  } catch (error) { alert(error.message); }
-};
-
-window.login = async function () {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-  if (!email || !password) return alert("تکایە خانەکان پڕ بکەرەوە");
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    window.location.href = "dashboard.html";
-  } catch (error) { alert(error.message); }
-};
+provider.addScope('public_profile');
+provider.addScope('email');
 
 window.facebookLogin = async function () {
   try {
-    await signInWithRedirect(auth, provider);
-  } catch (error) { alert(error.message); }
+    // بەکارهێنانی signInWithPopup لەبری signInWithRedirect
+    const result = await signInWithPopup(auth, provider);
+    if (result.user) {
+      window.location.href = "dashboard.html";
+    }
+  } catch (error) {
+    alert("هەڵە: " + error.message);
+  }
 };
-
-getRedirectResult(auth).then((result) => {
-  if (result) { window.location.href = "dashboard.html"; }
-}).catch((error) => { console.error(error); });
 </script>
 
 </body>
